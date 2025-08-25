@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Hope Foundation</title>
+    <meta name="description" content="Make a secure donation to Hope Foundation. Support our projects with M-Pesa, Visa, bank transfer, or other payment methods. Every contribution makes a difference.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar container">
+            <a href="index.html" class="navbar-brand">Hope Foundation</a>
+            <button class="navbar-toggle">☰</button>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="hero">
+            <div class="container">
+                <h1>Make a Donation</h1>
+                <p>Your generosity helps us create lasting change in communities worldwide. Every donation, big or small, makes a real difference.</p>
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Your Impact</h2>
+                    <p>See how your donation can make a direct difference in the lives of those we serve.</p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3 style="color: var(--accent-color);">$25</h3>
+                            <p>Provides clean water access for one family for an entire year</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3 style="color: var(--accent-color);">$50</h3>
+                            <p>Sponsors school supplies for one child for a full academic year</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3 style="color: var(--accent-color);">$100</h3>
+                            <p>Funds medical care and treatments for 10 patients in our mobile clinics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Form Section -->
+        <section class="section section-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6" style="margin: 0 auto;">
+                        <div class="card">
+                            <h2 class="text-center mb-4">Secure Donation Form</h2>
+                            <form id="donateForm">
+                                <!-- Donation Amount -->
+                                <div class="form-group">
+                                    <label class="form-label">Select Donation Amount *</label>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer; margin-bottom: 0.5rem;" onclick="selectAmount(25)">
+                                                <input type="radio" name="amount" value="25" style="display: none;">
+                                                $25
+                                            </label>
+                                        </div>
+                                        <div class="col-3">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer; margin-bottom: 0.5rem;" onclick="selectAmount(50)">
+                                                <input type="radio" name="amount" value="50" style="display: none;">
+                                                $50
+                                            </label>
+                                        </div>
+                                        <div class="col-3">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer; margin-bottom: 0.5rem;" onclick="selectAmount(100)">
+                                                <input type="radio" name="amount" value="100" style="display: none;">
+                                                $100
+                                            </label>
+                                        </div>
+                                        <div class="col-3">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer; margin-bottom: 0.5rem;" onclick="selectAmount('custom')">
+                                                <input type="radio" name="amount" value="custom" style="display: none;">
+                                                Other
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="custom-amount" style="display: none; margin-top: 1rem;">
+                                        <input type="number" name="customAmount" class="form-control" placeholder="Enter custom amount" min="1" step="0.01">
+                                    </div>
+                                </div>
+
+                                <!-- Donation Type -->
+                                <div class="form-group">
+                                    <label class="form-label">Donation Type</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid var(--primary-color); border-radius: 5px; cursor: pointer; background: var(--primary-color); color: white;" onclick="selectDonationType('one-time')">
+                                                <input type="radio" name="donationType" value="one-time" style="display: none;" checked>
+                                                One-Time
+                                            </label>
+                                        </div>
+                                        <div class="col-6">
+                                            <label style="display: block; text-align: center; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectDonationType('monthly')">
+                                                <input type="radio" name="donationType" value="monthly" style="display: none;">
+                                                Monthly
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="form-group">
+                                    <label class="form-label">Payment Method *</label>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('mpesa')">
+                                                <input type="radio" name="paymentMethod" value="mpesa" style="display: none;">
+                                                <strong>M-Pesa</strong><br>
+                                                <small>Mobile Money</small>
+                                            </label>
+                                        </div>
+                                        <div class="col-4">
+                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('card')">
+                                                <input type="radio" name="paymentMethod" value="card" style="display: none;">
+                                                <strong>Credit/Debit</strong><br>
+                                                <small>Visa, Mastercard</small>
+                                            </label>
+                                        </div>
+                                        <div class="col-4">
+                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('bank')">
+                                                <input type="radio" name="paymentMethod" value="bank" style="display: none;">
+                                                <strong>Bank Transfer</strong><br>
+                                                <small>Direct Deposit</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Donor Information -->
+                                <div class="form-group">
+                                    <label for="donorName" class="form-label">Full Name *</label>
+                                    <input type="text" id="donorName" name="donorName" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="donorEmail" class="form-label">Email Address *</label>
+                                    <input type="email" id="donorEmail" name="donorEmail" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="donorPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="donorPhone" name="donorPhone" class="form-control" placeholder="For M-Pesa and updates">
+                                </div>
+
+                                <!-- Project Selection -->
+                                <div class="form-group">
+                                    <label for="projectSelection" class="form-label">Direct Your Donation</label>
+                                    <select id="projectSelection" name="projectSelection" class="form-control">
+                                        <option value="general">Where Most Needed</option>
+                                        <option value="clean-water">Clean Water Initiative</option>
+                                        <option value="education">Education for All</option>
+                                        <option value="healthcare">Healthcare Access Program</option>
+                                        <option value="emergency">Emergency Relief Fund</option>
+                                    </select>
+                                </div>
+
+                                <!-- Message -->
+                                <div class="form-group">
+                                    <label for="donorMessage" class="form-label">Message (Optional)</label>
+                                    <textarea id="donorMessage" name="donorMessage" class="form-control" rows="3" placeholder="Share why you're supporting our mission..."></textarea>
+                                </div>
+
+                                <!-- Anonymous Option -->
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" name="anonymous" value="1" style="margin-right: 0.5rem;">
+                                        Make my donation anonymous
+                                    </label>
+                                </div>
+
+                                <!-- Newsletter -->
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" name="newsletter" value="1" style="margin-right: 0.5rem;" checked>
+                                        Subscribe to our newsletter for updates
+                                    </label>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
+                                        Proceed to Secure Payment
+                                    </button>
+                                </div>
+
+                                <!-- Security Notice -->
+                                <div class="text-center" style="margin-top: 1rem; padding: 1rem; background: var(--background-light); border-radius: 5px;">
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">
+                                        🔒 Your donation is secure and encrypted. We never store your payment information.
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alternative Donation Methods -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Other Ways to Donate</h2>
+                    <p>Choose the method that works best for you.</p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>Bank Transfer</h3>
+                            <p><strong>Account Name:</strong> Hope Foundation<br>
+                            <strong>Account Number:</strong> 123456789<br>
+                            <strong>Swift Code:</strong> HFBANK01<br>
+                            <strong>Reference:</strong> Your name + "Donation"</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>M-Pesa (Kenya)</h3>
+                            <p><strong>Paybill:</strong> 400200<br>
+                            <strong>Account:</strong> HopeFound<br>
+                            <strong>Or Directly:</strong> 0700123456<br>
+                            <small>SMS confirmation will be sent</small></p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>Cryptocurrency</h3>
+                            <p><strong>Bitcoin:</strong><br>
+                            <small>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</small><br>
+                            <strong>Ethereum:</strong><br>
+                            <small>0x742d35Cc6634C0532925a3b8D9f9f9f</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="section section-bg">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Donation FAQ</h2>
+                    <p>Common questions about making donations to Hope Foundation.</p>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>Is my donation secure?</h3>
+                            <p>Yes, all online donations are processed through secure, encrypted payment gateways. We never store your payment information on our servers.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>Is my donation tax-deductible?</h3>
+                            <p>Yes, Hope Foundation is a registered non-profit organization. You will receive a tax-deductible receipt for your donation via email.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>How is my donation used?</h3>
+                            <p>85% of donations go directly to programs, 10% to administration, and 5% to fundraising. We publish annual financial reports for full transparency.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>Can I cancel a recurring donation?</h3>
+                            <p>Yes, you can cancel or modify recurring donations at any time by contacting us or managing your preferences through the link in your receipt emails.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact for Large Donations -->
+        <section class="section">
+            <div class="container text-center">
+                <h2>Planning a Large Donation?</h2>
+                <p class="mb-4">For donations over $10,000, corporate partnerships, or legacy giving, our team can work with you to maximize your impact.</p>
+                <a href="contact.html" class="btn btn-primary">Contact Our Development Team</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3>Hope Foundation</h3>
+                <p>Transforming lives together through compassion, dedication, and collective action.</p>
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About Us</a>
+                <a href="projects.html">Projects</a>
+                <a href="donate.html">Donate</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hope Foundation. All rights reserved. | <a href="#" style="color: white;">Privacy Policy</a> | <a href="#" style="color: white;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Donation form specific functions
+        function selectAmount(amount) {
+            // Clear all selections
+            document.querySelectorAll('input[name="amount"]').forEach(input => {
+                input.parentElement.style.border = '2px solid #e9ecef';
+                input.parentElement.style.backgroundColor = 'transparent';
+                input.parentElement.style.color = 'var(--text-dark)';
+            });
+            
+            // Select the clicked amount
+            const selectedInput = document.querySelector(`input[name="amount"][value="${amount}"]`);
+            if (selectedInput) {
+                selectedInput.checked = true;
+                selectedInput.parentElement.style.border = '2px solid var(--primary-color)';
+                selectedInput.parentElement.style.backgroundColor = 'var(--primary-color)';
+                selectedInput.parentElement.style.color = 'white';
+                
+                // Show/hide custom amount field
+                const customAmountDiv = document.querySelector('.custom-amount');
+                if (amount === 'custom') {
+                    customAmountDiv.style.display = 'block';
+                } else {
+                    customAmountDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        function selectDonationType(type) {
+            document.querySelectorAll('input[name="donationType"]').forEach(input => {
+                input.parentElement.style.border = '2px solid #e9ecef';
+                input.parentElement.style.backgroundColor = 'transparent';
+                input.parentElement.style.color = 'var(--text-dark)';
+            });
+            
+            const selectedInput = document.querySelector(`input[name="donationType"][value="${type}"]`);
+            if (selectedInput) {
+                selectedInput.checked = true;
+                selectedInput.parentElement.style.border = '2px solid var(--primary-color)';
+                selectedInput.parentElement.style.backgroundColor = 'var(--primary-color)';
+                selectedInput.parentElement.style.color = 'white';
+            }
+        }
+        
+        function selectPaymentMethod(method) {
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
+                input.parentElement.style.border = '2px solid #e9ecef';
+                input.parentElement.style.backgroundColor = 'transparent';
+                input.parentElement.style.color = 'var(--text-dark)';
+            });
+            
+            const selectedInput = document.querySelector(`input[name="paymentMethod"][value="${method}"]`);
+            if (selectedInput) {
+                selectedInput.checked = true;
+                selectedInput.parentElement.style.border = '2px solid var(--primary-color)';
+                selectedInput.parentElement.style.backgroundColor = 'var(--primary-color)';
+                selectedInput.parentElement.style.color = 'white';
+            }
+        }
+        
+        // Initialize default selections
+        document.addEventListener('DOMContentLoaded', function() {
+            selectDonationType('one-time');
+        });
+    </script>
+</body>
+</html>

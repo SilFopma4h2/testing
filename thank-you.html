@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - Hope Foundation</title>
+    <meta name="description" content="Thank you for your donation to Hope Foundation. Your contribution is making a real difference in communities worldwide.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar container">
+            <a href="index.html" class="navbar-brand">Hope Foundation</a>
+            <button class="navbar-toggle">☰</button>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Thank You Section -->
+        <section class="hero">
+            <div class="container text-center">
+                <h1>🎉 Thank You!</h1>
+                <p>Your generous donation is making a real difference in the lives of those we serve. We are deeply grateful for your support.</p>
+            </div>
+        </section>
+
+        <!-- Donation Details -->
+        <section class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6" style="margin: 0 auto;">
+                        <div class="card text-center" id="donationDetails">
+                            <h2>Donation Confirmation</h2>
+                            <div style="background: var(--success-color); color: white; padding: 1rem; border-radius: 5px; margin: 1.5rem 0;">
+                                <h3 style="margin: 0;">✓ Payment Successful</h3>
+                            </div>
+                            <div id="donationInfo">
+                                <p><strong>Donation Amount:</strong> <span id="amount">$0</span></p>
+                                <p><strong>Payment Method:</strong> <span id="method">N/A</span></p>
+                                <p><strong>Transaction ID:</strong> <span id="transactionId">TXN-123456789</span></p>
+                                <p><strong>Date:</strong> <span id="donationDate">January 1, 2025</span></p>
+                            </div>
+                            <div style="background: var(--background-light); padding: 1rem; border-radius: 5px; margin-top: 1.5rem;">
+                                <p style="margin: 0; font-size: 0.9rem;">📧 A receipt has been sent to your email address for tax purposes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section class="section section-bg">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Your Impact</h2>
+                    <p>Here's how your donation will make a difference in our current projects.</p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>Clean Water</h3>
+                            <p>Your contribution helps provide clean, safe drinking water to families in rural communities across East Africa.</p>
+                            <div style="color: var(--accent-color); font-weight: bold; font-size: 1.1rem;">25,000+ people served</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>Education</h3>
+                            <p>Supporting quality education initiatives and helping children access learning opportunities that change their futures.</p>
+                            <div style="color: var(--accent-color); font-weight: bold; font-size: 1.1rem;">2,500+ students enrolled</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>Healthcare</h3>
+                            <p>Funding mobile clinics and community health programs that provide essential medical care in underserved areas.</p>
+                            <div style="color: var(--accent-color); font-weight: bold; font-size: 1.1rem;">12,000+ patients treated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>What Happens Next?</h2>
+                    <p>Here's what you can expect after your donation.</p>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>📧 Immediate Confirmation</h3>
+                            <p>You'll receive an email receipt within the next few minutes. If you don't see it, please check your spam folder.</p>
+                            
+                            <h3 style="margin-top: 1.5rem;">📊 Regular Updates</h3>
+                            <p>As a donor, you'll receive quarterly updates about our projects and the impact your donation is making.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>📋 Annual Report</h3>
+                            <p>Each year, we'll send you a comprehensive impact report showing exactly how donations were used and the results achieved.</p>
+                            
+                            <h3 style="margin-top: 1.5rem;">💬 Stay Connected</h3>
+                            <p>Follow our social media and newsletter for real-time updates from our project locations around the world.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Share Section -->
+        <section class="section section-bg">
+            <div class="container text-center">
+                <h2>Help Spread the Word</h2>
+                <p class="mb-4">Share Hope Foundation with your friends and family to multiply your impact.</p>
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <a href="#" onclick="shareOnSocial('facebook')" class="btn btn-primary" style="background: #3b5998;">Share on Facebook</a>
+                    <a href="#" onclick="shareOnSocial('twitter')" class="btn btn-primary" style="background: #1da1f2;">Share on Twitter</a>
+                    <a href="#" onclick="shareOnSocial('linkedin')" class="btn btn-primary" style="background: #0077b5;">Share on LinkedIn</a>
+                    <a href="#" onclick="copyLink()" class="btn btn-outline">Copy Link</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ways to Stay Involved -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Other Ways to Get Involved</h2>
+                    <p>Your donation is just the beginning. Here are other ways to support our mission.</p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>🤝 Volunteer</h3>
+                            <p>Join our team of dedicated volunteers and contribute your time and skills to our projects.</p>
+                            <a href="contact.html" class="btn btn-primary">Become a Volunteer</a>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>🏢 Corporate Partnership</h3>
+                            <p>Partner with us through your organization to create even greater impact together.</p>
+                            <a href="contact.html" class="btn btn-primary">Explore Partnerships</a>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <h3>🎯 Monthly Giving</h3>
+                            <p>Set up a recurring monthly donation to provide sustained support for our long-term projects.</p>
+                            <a href="donate.html" class="btn btn-primary">Set Up Monthly Giving</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Information -->
+        <section class="section section-bg">
+            <div class="container text-center">
+                <h2>Questions About Your Donation?</h2>
+                <p class="mb-4">If you have any questions about your donation or need assistance, we're here to help.</p>
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Email:</strong> donate@hopefoundation.org</p>
+                        <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+                        <p><strong>Hours:</strong> Monday-Friday, 8AM-6PM EST</p>
+                    </div>
+                </div>
+                <a href="contact.html" class="btn btn-primary">Contact Support</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3>Hope Foundation</h3>
+                <p>Transforming lives together through compassion, dedication, and collective action.</p>
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About Us</a>
+                <a href="projects.html">Projects</a>
+                <a href="donate.html">Donate</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hope Foundation. All rights reserved. | <a href="#" style="color: white;">Privacy Policy</a> | <a href="#" style="color: white;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Extract URL parameters and display donation details
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const amount = urlParams.get('amount') || '25';
+            const method = urlParams.get('method') || 'Online Payment';
+            
+            // Display donation details
+            document.getElementById('amount').textContent = '$' + amount;
+            document.getElementById('method').textContent = formatPaymentMethod(method);
+            document.getElementById('transactionId').textContent = 'TXN-' + generateTransactionId();
+            document.getElementById('donationDate').textContent = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        });
+        
+        function formatPaymentMethod(method) {
+            switch(method) {
+                case 'mpesa': return 'M-Pesa Mobile Money';
+                case 'card': return 'Credit/Debit Card';
+                case 'bank': return 'Bank Transfer';
+                default: return 'Online Payment';
+            }
+        }
+        
+        function generateTransactionId() {
+            return Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+        
+        function shareOnSocial(platform) {
+            const url = encodeURIComponent(window.location.origin);
+            const text = encodeURIComponent('I just donated to Hope Foundation to help transform lives worldwide. Join me in making a difference!');
+            
+            let shareUrl = '';
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+            }
+            
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+        }
+        
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.origin).then(function() {
+                alert('Link copied to clipboard!');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.origin;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Link copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
