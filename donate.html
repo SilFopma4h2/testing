@@ -127,29 +127,33 @@
 
                                 <!-- Payment Method -->
                                 <div class="form-group">
-                                    <label class="form-label">Payment Method *</label>
+                                    <label class="form-label">Payment Method * (Cryptocurrency Only)</label>
                                     <div class="row">
-                                        <div class="col-4">
-                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('mpesa')">
-                                                <input type="radio" name="paymentMethod" value="mpesa" style="display: none;">
-                                                <strong>M-Pesa</strong><br>
-                                                <small>Mobile Money</small>
+                                        <div class="col-6">
+                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('bitcoin')">
+                                                <input type="radio" name="paymentMethod" value="bitcoin" style="display: none;">
+                                                <strong>Bitcoin (BTC)</strong><br>
+                                                <small>Send to our BTC address</small>
                                             </label>
                                         </div>
-                                        <div class="col-4">
-                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('card')">
-                                                <input type="radio" name="paymentMethod" value="card" style="display: none;">
-                                                <strong>Credit/Debit</strong><br>
-                                                <small>Visa, Mastercard</small>
+                                        <div class="col-6">
+                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('ethereum')">
+                                                <input type="radio" name="paymentMethod" value="ethereum" style="display: none;">
+                                                <strong>Ethereum (ETH)</strong><br>
+                                                <small>Send to our ETH address</small>
                                             </label>
                                         </div>
-                                        <div class="col-4">
-                                            <label style="display: block; text-align: center; padding: 1rem 0.5rem; border: 2px solid #e9ecef; border-radius: 5px; cursor: pointer;" onclick="selectPaymentMethod('bank')">
-                                                <input type="radio" name="paymentMethod" value="bank" style="display: none;">
-                                                <strong>Bank Transfer</strong><br>
-                                                <small>Direct Deposit</small>
-                                            </label>
-                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Crypto Wallet Display -->
+                                <div id="cryptoWalletInfo" class="form-group" style="display: none;">
+                                    <div class="card" style="background: #f8f9fa; border: 2px solid #28a745; border-radius: 10px; padding: 1rem;">
+                                        <h4 id="cryptoTitle" style="color: #28a745; margin-bottom: 1rem;">Send Your Donation</h4>
+                                        <div id="cryptoAddress" style="font-family: monospace; background: white; padding: 1rem; border-radius: 5px; border: 1px solid #ddd; word-break: break-all; margin-bottom: 1rem;"></div>
+                                        <p style="color: #666; font-size: 0.9rem; margin: 0;">
+                                            <strong>Important:</strong> Send the exact amount to this address. Your donation will be processed once the transaction is confirmed on the blockchain.
+                                        </p>
                                     </div>
                                 </div>
 
@@ -206,7 +210,7 @@
                                 <!-- Submit Button -->
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.1rem; padding: 1rem; position: relative;">
-                                        <span class="btn-text">Proceed to Secure Payment</span>
+                                        <span class="btn-text">Submit Donation Request</span>
                                         <span class="loading-spinner" style="display: none;"></span>
                                     </button>
                                 </div>
@@ -214,7 +218,7 @@
                                 <!-- Security Notice -->
                                 <div class="text-center" style="margin-top: 1rem; padding: 1rem; background: var(--background-light); border-radius: 5px;">
                                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">
-                                        🔒 Your donation is secure and encrypted. We never store your payment information.
+                                        🔐 Your donation details are secure. Send cryptocurrency to the provided address to complete your donation. We'll notify you once confirmed.
                                     </p>
                                 </div>
                             </form>
@@ -224,40 +228,38 @@
             </div>
         </section>
 
-        <!-- Alternative Donation Methods -->
+        <!-- Cryptocurrency Information -->
         <section class="section">
             <div class="container">
                 <div class="section-title">
-                    <h2>Other Ways to Donate</h2>
-                    <p>Choose the method that works best for you.</p>
+                    <h2>Cryptocurrency Donations Only</h2>
+                    <p>We now exclusively accept donations through Bitcoin and Ethereum for transparency and security.</p>
                 </div>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="card text-center">
-                            <h3>Bank Transfer</h3>
-                            <p><strong>Account Name:</strong> Hope Foundation<br>
-                            <strong>Account Number:</strong> 123456789<br>
-                            <strong>Swift Code:</strong> HFBANK01<br>
-                            <strong>Reference:</strong> Your name + "Donation"</p>
+                            <h3 style="color: #f7931a;">Bitcoin (BTC)</h3>
+                            <p><strong>Our Bitcoin Address:</strong><br>
+                            <small style="font-family: monospace; word-break: break-all;">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</small><br>
+                            <small style="color: #666;">Scan QR code or copy address above</small></p>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="card text-center">
-                            <h3>M-Pesa (Kenya)</h3>
-                            <p><strong>Paybill:</strong> 400200<br>
-                            <strong>Account:</strong> HopeFound<br>
-                            <strong>Or Directly:</strong> 0700123456<br>
-                            <small>SMS confirmation will be sent</small></p>
+                            <h3 style="color: #627eea;">Ethereum (ETH)</h3>
+                            <p><strong>Our Ethereum Address:</strong><br>
+                            <small style="font-family: monospace; word-break: break-all;">0x742d35Cc6634C0532925a3b8D9f9f9f</small><br>
+                            <small style="color: #666;">Scan QR code or copy address above</small></p>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="card text-center">
-                            <h3>Cryptocurrency</h3>
-                            <p><strong>Bitcoin:</strong><br>
-                            <small>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</small><br>
-                            <strong>Ethereum:</strong><br>
-                            <small>0x742d35Cc6634C0532925a3b8D9f9f9f</small></p>
-                        </div>
+                </div>
+                <div class="text-center" style="margin-top: 2rem;">
+                    <div class="card" style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1.5rem;">
+                        <h4 style="color: #856404;">Important Notice</h4>
+                        <p style="color: #856404; margin: 0;">
+                            Please use the donation form above to register your donation details before sending cryptocurrency. 
+                            This helps us acknowledge your contribution and send you a receipt.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -386,6 +388,23 @@
                 selectedInput.parentElement.style.border = '2px solid var(--primary-color)';
                 selectedInput.parentElement.style.backgroundColor = 'var(--primary-color)';
                 selectedInput.parentElement.style.color = 'white';
+                
+                // Show crypto wallet info
+                const cryptoWalletInfo = document.getElementById('cryptoWalletInfo');
+                const cryptoTitle = document.getElementById('cryptoTitle');
+                const cryptoAddress = document.getElementById('cryptoAddress');
+                
+                cryptoWalletInfo.style.display = 'block';
+                
+                if (method === 'bitcoin') {
+                    cryptoTitle.textContent = 'Send Bitcoin (BTC) to this address:';
+                    // Placeholder address - will be updated with actual address
+                    cryptoAddress.textContent = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
+                } else if (method === 'ethereum') {
+                    cryptoTitle.textContent = 'Send Ethereum (ETH) to this address:';
+                    // Placeholder address - will be updated with actual address
+                    cryptoAddress.textContent = '0x742d35Cc6634C0532925a3b8D9f9f9f';
+                }
             }
         }
         

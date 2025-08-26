@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import re
 import hashlib
 import json
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -29,6 +30,9 @@ app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@hopefoundation.org')
+
+# Discord webhook configuration
+DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL', '')  # Will be set by user
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -232,6 +236,76 @@ def send_email(to, subject, template, **kwargs):
         return True
     except Exception as e:
         print(f"Failed to send email: {e}")
+        return False
+
+def send_discord_notification(donation_data):
+    """Send donation notification to Discord via webhook"""
+    if not DISCORD_WEBHOOK_URL:
+        print("Discord webhook URL not configured")
+        return False
+    
+    try:
+        # Create Discord embed message
+        embed = {
+            "title": "🎉 New Cryptocurrency Donation Received!",
+            "description": f"A new donation of ${donation_data['amount']} has been submitted",
+            "color": 0x28a745,  # Green color
+            "fields": [
+                {
+                    "name": "💰 Amount",
+                    "value": f"${donation_data['amount']}",
+                    "inline": True
+                },
+                {
+                    "name": "🪙 Cryptocurrency",
+                    "value": donation_data['payment_method'].title(),
+                    "inline": True
+                },
+                {
+                    "name": "🎯 Project",
+                    "value": donation_data['project'].replace('-', ' ').title(),
+                    "inline": True
+                },
+                {
+                    "name": "👤 Donor",
+                    "value": "Anonymous" if donation_data.get('anonymous') else donation_data['donor_name'],
+                    "inline": True
+                },
+                {
+                    "name": "📧 Email",
+                    "value": donation_data['donor_email'] if not donation_data.get('anonymous') else "Hidden",
+                    "inline": True
+                },
+                {
+                    "name": "🔗 Transaction ID",
+                    "value": donation_data['transaction_id'],
+                    "inline": True
+                }
+            ],
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "footer": {
+                "text": "Hope Foundation Crypto Donations"
+            }
+        }
+        
+        if donation_data.get('message'):
+            embed["fields"].append({
+                "name": "💌 Message",
+                "value": donation_data['message'][:500] + ("..." if len(donation_data['message']) > 500 else ""),
+                "inline": False
+            })
+        
+        # Send webhook
+        payload = {
+            "embeds": [embed]
+        }
+        
+        response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+        response.raise_for_status()
+        return True
+        
+    except Exception as e:
+        print(f"Failed to send Discord notification: {e}")
         return False
 
 # Routes for serving static files
@@ -468,6 +542,10 @@ def donation_form():
         if not data.get('paymentMethod'):
             return jsonify({'success': False, 'message': 'Please select a payment method.'}), 400
         
+        # Only allow cryptocurrency payments
+        if data['paymentMethod'] not in ['bitcoin', 'ethereum']:
+            return jsonify({'success': False, 'message': 'Only cryptocurrency donations are accepted. Please select Bitcoin or Ethereum.'}), 400
+        
         # Create donation record
         donation = Donation(
             name=data['donorName'],
@@ -511,30 +589,58 @@ def donation_form():
         db.session.commit()
         
         # Send confirmation email
+        crypto_addresses = {
+            'bitcoin': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',  # Placeholder - to be updated
+            'ethereum': '0x742d35Cc6634C0532925a3b8D9f9f9f'  # Placeholder - to be updated
+        }
+        
+        crypto_address = crypto_addresses.get(data['paymentMethod'], 'N/A')
+        
         email_template = f"""
-        <h2>Thank you for your generous donation!</h2>
+        <h2>Thank you for your cryptocurrency donation!</h2>
         <p>Dear {data['donorName']},</p>
-        <p>Thank you for your donation of ${amount} to Hope Foundation!</p>
+        <p>Thank you for your {data['paymentMethod'].title()} donation of ${amount} to Hope Foundation!</p>
         <p><strong>Donation Details:</strong></p>
         <ul>
         <li>Amount: ${amount}</li>
         <li>Type: {data.get('donationType', 'one-time').title()}</li>
-        <li>Payment Method: {data['paymentMethod'].title()}</li>
+        <li>Cryptocurrency: {data['paymentMethod'].title()}</li>
         <li>Project: {data.get('projectSelection', 'general').replace('-', ' ').title()}</li>
+        <li>Transaction ID: {transaction_id}</li>
         </ul>
+        <p><strong>To complete your donation, please send the cryptocurrency to:</strong></p>
+        <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; word-break: break-all;">
+        {crypto_address}
+        </p>
+        <p><strong>Important:</strong> Please send exactly ${amount} worth of {data['paymentMethod'].title()} to the address above.</p>
+        <p>Once your transaction is confirmed on the blockchain, we will process your donation.</p>
         <p>Your donation will make a real difference in the lives of those we serve.</p>
-        <p>A tax-deductible receipt will be sent separately.</p>
+        <p>A tax-deductible receipt will be sent once the transaction is confirmed.</p>
         <p>Best regards,<br>Hope Foundation Team</p>
         """
         
-        send_email(data['donorEmail'], 'Thank you for your donation to Hope Foundation', email_template)
+        send_email(data['donorEmail'], f'Complete your {data["paymentMethod"].title()} donation to Hope Foundation', email_template)
+        
+        # Send Discord notification
+        discord_data = {
+            'amount': amount,
+            'payment_method': data['paymentMethod'],
+            'project': data.get('projectSelection', 'general'),
+            'donor_name': data['donorName'],
+            'donor_email': data['donorEmail'],
+            'anonymous': data.get('anonymous', False),
+            'message': data.get('donorMessage', ''),
+            'transaction_id': transaction_id
+        }
+        send_discord_notification(discord_data)
         
         return jsonify({
             'success': True, 
-            'message': f'Thank you for your donation of ${amount}! Processing payment via {data["paymentMethod"]}...',
+            'message': f'Thank you! Please send ${amount} worth of {data["paymentMethod"].title()} to complete your donation. Check your email for wallet address details.',
             'amount': amount,
             'paymentMethod': data['paymentMethod'],
-            'transactionId': transaction_id
+            'transactionId': transaction_id,
+            'walletAddress': crypto_address
         })
         
     except Exception as e:
