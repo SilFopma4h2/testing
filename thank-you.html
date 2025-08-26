@@ -228,10 +228,9 @@
         
         function formatPaymentMethod(method) {
             switch(method) {
-                case 'mpesa': return 'M-Pesa Mobile Money';
-                case 'card': return 'Credit/Debit Card';
-                case 'bank': return 'Bank Transfer';
-                default: return 'Online Payment';
+                case 'bitcoin': return 'Bitcoin (BTC)';
+                case 'ethereum': return 'Ethereum (ETH)';
+                default: return 'Cryptocurrency';
             }
         }
         
