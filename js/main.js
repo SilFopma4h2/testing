@@ -74,44 +74,84 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Contact form handler
-function handleContactForm() {
+async function handleContactForm() {
     const form = document.getElementById('contactForm');
+    const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
     
     // Get form values
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const subject = formData.get('subject');
-    const message = formData.get('message');
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        subject: formData.get('subject'),
+        message: formData.get('message'),
+        newsletter: formData.get('newsletter') === '1'
+    };
     
     // Basic validation
-    if (!name || !email || !message) {
+    if (!data.name || !data.email || !data.message) {
         showAlert('Please fill in all required fields.', 'error');
         return;
     }
     
-    if (!isValidEmail(email)) {
+    if (!isValidEmail(data.email)) {
         showAlert('Please enter a valid email address.', 'error');
         return;
     }
     
-    // Simulate form submission
-    showAlert('Thank you for your message! We will get back to you soon.', 'success');
-    form.reset();
+    // Show loading state
+    submitButton.disabled = true;
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<span class="loading-spinner"></span>Sending...';
+    
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert(result.message, 'success');
+            form.reset();
+        } else {
+            showAlert(result.message, 'error');
+        }
+    } catch (error) {
+        showAlert('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+    }
 }
 
 // Donation form handler
-function handleDonationForm() {
+async function handleDonationForm() {
     const form = document.getElementById('donateForm');
+    const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
     
-    const amount = formData.get('amount');
-    const customAmount = formData.get('customAmount');
-    const paymentMethod = formData.get('paymentMethod');
-    const donorName = formData.get('donorName');
-    const donorEmail = formData.get('donorEmail');
+    const data = {
+        amount: formData.get('amount'),
+        customAmount: formData.get('customAmount'),
+        donationType: formData.get('donationType'),
+        paymentMethod: formData.get('paymentMethod'),
+        donorName: formData.get('donorName'),
+        donorEmail: formData.get('donorEmail'),
+        donorPhone: formData.get('donorPhone'),
+        projectSelection: formData.get('projectSelection'),
+        donorMessage: formData.get('donorMessage'),
+        anonymous: formData.get('anonymous') === '1',
+        newsletter: formData.get('newsletter') === '1'
+    };
     
-    const donationAmount = amount === 'custom' ? customAmount : amount;
+    const donationAmount = data.amount === 'custom' ? data.customAmount : data.amount;
     
     // Basic validation
     if (!donationAmount || donationAmount <= 0) {
@@ -119,44 +159,100 @@ function handleDonationForm() {
         return;
     }
     
-    if (!paymentMethod) {
+    if (!data.paymentMethod) {
         showAlert('Please select a payment method.', 'error');
         return;
     }
     
-    if (!donorName || !donorEmail) {
+    if (!data.donorName || !data.donorEmail) {
         showAlert('Please fill in your name and email address.', 'error');
         return;
     }
     
-    if (!isValidEmail(donorEmail)) {
+    if (!isValidEmail(data.donorEmail)) {
         showAlert('Please enter a valid email address.', 'error');
         return;
     }
     
-    // Simulate payment processing
-    showAlert(`Thank you for your donation of $${donationAmount}! Processing payment via ${paymentMethod}...`, 'success');
+    // Show loading state
+    submitButton.disabled = true;
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<span class="loading-spinner"></span>Processing...';
     
-    // In a real implementation, this would redirect to the payment processor
-    setTimeout(() => {
-        window.location.href = 'thank-you.html?amount=' + donationAmount + '&method=' + paymentMethod;
-    }, 2000);
+    try {
+        const response = await fetch('/api/donate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert(result.message, 'success');
+            
+            // Redirect to thank you page after successful donation
+            setTimeout(() => {
+                window.location.href = 'thank-you.html?amount=' + result.amount + '&method=' + result.paymentMethod;
+            }, 2000);
+        } else {
+            showAlert(result.message, 'error');
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }
+    } catch (error) {
+        showAlert('Network error. Please check your connection and try again.', 'error');
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+    }
 }
 
 // Newsletter form handler
-function handleNewsletterForm() {
+async function handleNewsletterForm() {
     const form = document.getElementById('newsletterForm');
+    const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
     
-    const email = formData.get('email');
+    const data = {
+        email: formData.get('email')
+    };
     
-    if (!email || !isValidEmail(email)) {
+    if (!data.email || !isValidEmail(data.email)) {
         showAlert('Please enter a valid email address.', 'error');
         return;
     }
     
-    showAlert('Thank you for subscribing to our newsletter!', 'success');
-    form.reset();
+    // Show loading state
+    submitButton.disabled = true;
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<span class="loading-spinner"></span>Subscribing...';
+    
+    try {
+        const response = await fetch('/api/newsletter', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert(result.message, 'success');
+            form.reset();
+        } else {
+            showAlert(result.message, 'error');
+        }
+    } catch (error) {
+        showAlert('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+    }
 }
 
 // Utility functions
@@ -229,7 +325,80 @@ if (!document.querySelector('#alert-animations')) {
     const style = document.createElement('style');
     style.id = 'alert-animations';
     style.textContent = `
-        @keyframes slideIn {
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            max-width: 500px;
+            z-index: 9999;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .alert-success {
+            background: var(--success-color);
+            border-left: 5px solid #1e7e34;
+        }
+        
+        .alert-error {
+            background: var(--error-color);
+            border-left: 5px solid #bd2130;
+        }
+        
+        .alert-info {
+            background: var(--info-color);
+            border-left: 5px solid #117a8b;
+        }
+        
+        .alert-warning {
+            background: var(--warning-color);
+            color: var(--text-dark);
+            border-left: 5px solid #e0a800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-weight: 500;
+            gap: 0.75rem;
+        }
+        
+        .alert-warning .alert-content {
+            color: var(--text-dark);
+        }
+        
+        .alert-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .alert-message {
+            flex-grow: 1;
+            line-height: 1.4;
+        }
+        
+        .alert-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            margin-left: auto;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+        
+        .alert-close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideInRight {
             from {
                 transform: translateX(100%);
                 opacity: 0;
@@ -238,6 +407,21 @@ if (!document.querySelector('#alert-animations')) {
                 transform: translateX(0);
                 opacity: 1;
             }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     `;
     document.head.appendChild(style);
