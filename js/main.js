@@ -1,6 +1,9 @@
 // Main JavaScript for NGO Website MVP
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Check login status and update navigation
+    checkLoginStatusAndUpdateNav();
+    
     // Mobile navigation toggle
     const navbarToggle = document.querySelector('.navbar-toggle');
     const navbarNav = document.querySelector('.navbar-nav');
@@ -431,4 +434,44 @@ if (!document.querySelector('#alert-animations')) {
 function initializeComponents() {
     // Add any component initialization here
     console.log('NGO Website MVP - JavaScript loaded successfully');
+}
+
+// Authentication functions
+async function checkLoginStatusAndUpdateNav() {
+    try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+            const result = await response.json();
+            updateNavForLoggedInUser(result.user);
+        }
+    } catch (error) {
+        // User not logged in, keep default nav
+    }
+}
+
+function updateNavForLoggedInUser(user) {
+    const authLink = document.getElementById('authLink');
+    if (authLink) {
+        authLink.textContent = `Hi, ${user.first_name}`;
+        authLink.href = 'login.html'; // Dashboard page
+        authLink.classList.add('user-link');
+    }
+}
+
+// Global logout function
+async function globalLogout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+        });
+        
+        if (response.ok) {
+            showAlert('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    } catch (error) {
+        showAlert('Error logging out', 'error');
+    }
 }
