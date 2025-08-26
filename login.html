@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - Hope Foundation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-auth:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-auth:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .user-dashboard {
+            display: none;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .recent-donations {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .donation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .donation-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="index.html" class="navbar-brand">
+                    <h1>Hope Foundation</h1>
+                </a>
+                <div class="navbar-menu">
+                    <a href="index.html">Home</a>
+                    <a href="about.html">About</a>
+                    <a href="projects.html">Projects</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="donate.html" class="btn-donate">Donate</a>
+                    <a href="login.html" class="btn-login" id="authLink">Login</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <div id="authSection" class="auth-container">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login">Login</div>
+                    <div class="auth-tab" data-tab="register">Register</div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active">
+                    <h2>Welcome Back!</h2>
+                    <p style="margin-bottom: 2rem; color: #666;">Please sign in to your account</p>
+                    
+                    <div class="form-group">
+                        <label for="loginCredential">Username or Email *</label>
+                        <input type="text" id="loginCredential" name="login" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password *</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">Sign In</button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
+                    <h2>Create Account</h2>
+                    <p style="margin-bottom: 2rem; color: #666;">Join us to track your donations and impact</p>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="first_name" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="last_name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone (Optional)</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required minlength="8">
+                        <small style="color: #666;">Must be at least 8 characters long</small>
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">Create Account</button>
+                </form>
+            </div>
+            
+            <!-- User Dashboard (shown when logged in) -->
+            <div id="userDashboard" class="user-dashboard">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>Welcome, <span id="userName"></span>!</h2>
+                        <p style="color: #666; margin: 0;">Your impact dashboard</p>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                </div>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalDonated">$0</div>
+                        <div class="stat-label">Total Donated</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="donationCount">0</div>
+                        <div class="stat-label">Donations Made</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="memberSince">--</div>
+                        <div class="stat-label">Member Since</div>
+                    </div>
+                </div>
+                
+                <div class="recent-donations">
+                    <h3>Recent Donations</h3>
+                    <div id="recentDonationsList">
+                        <!-- Recent donations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3>Hope Foundation</h3>
+                <p>Transforming lives worldwide through compassion and action.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hope Foundation. All rights reserved. | <a href="#" style="color: white;">Privacy Policy</a> | <a href="#" style="color: white;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Authentication functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const authTabs = document.querySelectorAll('.auth-tab');
+            const authForms = document.querySelectorAll('.auth-form');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const authSection = document.getElementById('authSection');
+            const userDashboard = document.getElementById('userDashboard');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // Tab switching
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    // Update tabs
+                    authTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update forms
+                    authForms.forEach(form => form.classList.remove('active'));
+                    document.getElementById(targetTab + 'Form').classList.add('active');
+                });
+            });
+            
+            // Check if user is already logged in
+            checkLoginStatus();
+            
+            // Login form handler
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await handleLogin();
+            });
+            
+            // Register form handler
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await handleRegister();
+            });
+            
+            // Logout handler
+            logoutBtn.addEventListener('click', async function() {
+                await handleLogout();
+            });
+            
+            async function handleLogin() {
+                const formData = new FormData(loginForm);
+                const data = {
+                    login: formData.get('login'),
+                    password: formData.get('password')
+                };
+                
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Signing in...';
+                
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => {
+                            loadUserDashboard();
+                        }, 1000);
+                    } else {
+                        showAlert(result.message, 'error');
+                    }
+                } catch (error) {
+                    showAlert('Network error. Please try again.', 'error');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Sign In';
+                }
+            }
+            
+            async function handleRegister() {
+                const formData = new FormData(registerForm);
+                const data = {
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    first_name: formData.get('first_name'),
+                    last_name: formData.get('last_name'),
+                    phone: formData.get('phone')
+                };
+                
+                const submitButton = registerForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Creating Account...';
+                
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => {
+                            loadUserDashboard();
+                        }, 1000);
+                    } else {
+                        showAlert(result.message, 'error');
+                    }
+                } catch (error) {
+                    showAlert('Network error. Please try again.', 'error');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Account';
+                }
+            }
+            
+            async function handleLogout() {
+                try {
+                    const response = await fetch('/api/logout', {
+                        method: 'POST',
+                    });
+                    
+                    const result = await response.json();
+                    showAlert(result.message, 'success');
+                    
+                    // Show auth forms again
+                    authSection.style.display = 'block';
+                    userDashboard.style.display = 'none';
+                    
+                    // Reset forms
+                    loginForm.reset();
+                    registerForm.reset();
+                    
+                } catch (error) {
+                    showAlert('Error logging out', 'error');
+                }
+            }
+            
+            async function checkLoginStatus() {
+                try {
+                    const response = await fetch('/api/user/profile');
+                    if (response.ok) {
+                        loadUserDashboard();
+                    }
+                } catch (error) {
+                    // User not logged in, show auth forms
+                }
+            }
+            
+            async function loadUserDashboard() {
+                try {
+                    const response = await fetch('/api/user/dashboard');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const dashboard = result.dashboard;
+                        
+                        // Update dashboard data
+                        document.getElementById('userName').textContent = 
+                            `${dashboard.user.first_name} ${dashboard.user.last_name}`;
+                        document.getElementById('totalDonated').textContent = 
+                            `$${dashboard.stats.total_donated.toFixed(2)}`;
+                        document.getElementById('donationCount').textContent = 
+                            dashboard.stats.donation_count;
+                        
+                        // Format member since date
+                        const memberSince = new Date(dashboard.user.created_at);
+                        document.getElementById('memberSince').textContent = 
+                            memberSince.toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                year: 'numeric' 
+                            });
+                        
+                        // Load recent donations
+                        const donationsHtml = dashboard.recent_donations.map(donation => `
+                            <div class="donation-item">
+                                <div>
+                                    <strong>$${donation.amount}</strong> to ${donation.project.replace('-', ' ')}
+                                    <br><small style="color: #666;">${new Date(donation.date).toLocaleDateString()}</small>
+                                </div>
+                                <div class="status" style="color: ${donation.status === 'completed' ? 'green' : 'orange'};">
+                                    ${donation.status}
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        document.getElementById('recentDonationsList').innerHTML = 
+                            donationsHtml || '<p style="color: #666;">No donations yet. <a href="donate.html">Make your first donation!</a></p>';
+                        
+                        // Show dashboard, hide auth forms
+                        authSection.style.display = 'none';
+                        userDashboard.style.display = 'block';
+                    }
+                } catch (error) {
+                    showAlert('Error loading dashboard', 'error');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

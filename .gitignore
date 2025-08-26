@@ -59,3 +59,5 @@ logs/
 # Temporary files
 tmp/
 temp/
+cookies.txt
+test_auth.py
