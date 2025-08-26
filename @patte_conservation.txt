@@ -1,0 +1,10 @@
+Patte Conservation Initiative
+
+This file marks the transition to cryptocurrency-only donations for the Hope Foundation.
+As part of our conservation efforts and commitment to modern payment methods, 
+we now exclusively accept donations through Bitcoin and Ethereum.
+
+All donations will be automatically notified to our Discord channel for 
+transparency and immediate acknowledgment.
+
+Thank you for supporting our conservation mission through cryptocurrency.
