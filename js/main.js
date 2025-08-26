@@ -269,48 +269,14 @@ function showAlert(message, type = 'info') {
     const existingAlerts = document.querySelectorAll('.alert');
     existingAlerts.forEach(alert => alert.remove());
     
-    // Create alert element
+    // Create alert element with proper structure
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
     alert.innerHTML = `
-        <span>${message}</span>
-        <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
-    `;
-    
-    // Add alert styles
-    alert.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        padding: 15px 20px;
-        border-radius: 5px;
-        color: white;
-        font-weight: 600;
-        z-index: 9999;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        animation: slideIn 0.3s ease-out;
-    `;
-    
-    // Set background color based on type
-    const colors = {
-        success: '#28a745',
-        error: '#dc3545',
-        warning: '#ffc107',
-        info: '#17a2b8'
-    };
-    alert.style.backgroundColor = colors[type] || colors.info;
-    
-    // Add close button styles
-    const closeButton = alert.querySelector('.alert-close');
-    closeButton.style.cssText = `
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        float: right;
-        margin-left: 10px;
+        <div class="alert-content">
+            <div class="alert-message">${message}</div>
+            <button type="button" class="alert-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+        </div>
     `;
     
     document.body.appendChild(alert);
