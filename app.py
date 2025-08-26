@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 import re
 import hashlib
+import json
 
 # Load environment variables
 load_dotenv()
@@ -126,6 +127,58 @@ class Newsletter(db.Model):
     email = db.Column(db.String(100), nullable=False, unique=True)
     subscribed_at = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='active')
+
+# Enhanced Financial Models
+class Expense(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(200), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    category = db.Column(db.String(50), nullable=False)  # program, admin, fundraising
+    project = db.Column(db.String(50))  # optional project allocation
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    receipt_url = db.Column(db.String(200))
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Budget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    allocated_amount = db.Column(db.Float, nullable=False)
+    spent_amount = db.Column(db.Float, default=0)
+    project = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Campaign(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    goal_amount = db.Column(db.Float, nullable=False)
+    raised_amount = db.Column(db.Float, default=0)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime)
+    status = db.Column(db.String(20), default='active')  # active, completed, paused
+    project_category = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class FinancialReport(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    report_type = db.Column(db.String(30), nullable=False)  # annual, quarterly, monthly
+    year = db.Column(db.Integer, nullable=False)
+    quarter = db.Column(db.Integer)  # 1-4 for quarterly reports
+    month = db.Column(db.Integer)  # 1-12 for monthly reports
+    total_income = db.Column(db.Float, default=0)
+    total_expenses = db.Column(db.Float, default=0)
+    program_expenses = db.Column(db.Float, default=0)
+    admin_expenses = db.Column(db.Float, default=0)
+    fundraising_expenses = db.Column(db.Float, default=0)
+    net_result = db.Column(db.Float, default=0)
+    report_data = db.Column(db.Text)  # JSON data for detailed breakdown
+    generated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Utility functions
 def validate_email_address(email):
@@ -641,6 +694,157 @@ def admin_stats():
         return jsonify(stats)
     except Exception as e:
         return jsonify({'error': 'Failed to fetch stats'}), 500
+
+# Enhanced Financial API Endpoints
+@app.route('/api/financial/overview')
+def financial_overview():
+    try:
+        # Calculate current year financial data
+        current_year = datetime.now().year
+        
+        # Total donations this year
+        year_donations = db.session.query(db.func.sum(Donation.amount)).filter(
+            db.extract('year', Donation.created_at) == current_year
+        ).scalar() or 0
+        
+        # Total expenses this year
+        year_expenses = db.session.query(db.func.sum(Expense.amount)).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.status == 'approved'
+        ).scalar() or 0
+        
+        # Expense breakdown by category
+        expense_breakdown = db.session.query(
+            Expense.category,
+            db.func.sum(Expense.amount).label('total')
+        ).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.status == 'approved'
+        ).group_by(Expense.category).all()
+        
+        # Campaign progress
+        active_campaigns = Campaign.query.filter_by(status='active').all()
+        campaign_data = []
+        for campaign in active_campaigns:
+            progress = (campaign.raised_amount / campaign.goal_amount * 100) if campaign.goal_amount > 0 else 0
+            campaign_data.append({
+                'id': campaign.id,
+                'name': campaign.name,
+                'goal': campaign.goal_amount,
+                'raised': campaign.raised_amount,
+                'progress': round(progress, 1)
+            })
+        
+        return jsonify({
+            'year': current_year,
+            'total_donations': year_donations,
+            'total_expenses': year_expenses,
+            'net_result': year_donations - year_expenses,
+            'expense_breakdown': {row[0]: row[1] for row in expense_breakdown},
+            'active_campaigns': campaign_data,
+            'expense_ratio': {
+                'program': round((expense_breakdown[0][1] if expense_breakdown and expense_breakdown[0][0] == 'program' else 0) / year_expenses * 100, 1) if year_expenses > 0 else 0,
+                'admin': round((expense_breakdown[1][1] if len(expense_breakdown) > 1 and expense_breakdown[1][0] == 'admin' else 0) / year_expenses * 100, 1) if year_expenses > 0 else 0,
+                'fundraising': round((expense_breakdown[2][1] if len(expense_breakdown) > 2 and expense_breakdown[2][0] == 'fundraising' else 0) / year_expenses * 100, 1) if year_expenses > 0 else 0
+            }
+        })
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch financial overview'}), 500
+
+@app.route('/api/financial/campaigns')
+def get_campaigns():
+    try:
+        campaigns = Campaign.query.filter_by(status='active').all()
+        campaign_list = []
+        for campaign in campaigns:
+            progress = (campaign.raised_amount / campaign.goal_amount * 100) if campaign.goal_amount > 0 else 0
+            campaign_list.append({
+                'id': campaign.id,
+                'name': campaign.name,
+                'description': campaign.description,
+                'goal_amount': campaign.goal_amount,
+                'raised_amount': campaign.raised_amount,
+                'progress': round(progress, 1),
+                'project_category': campaign.project_category,
+                'start_date': campaign.start_date.isoformat() if campaign.start_date else None,
+                'end_date': campaign.end_date.isoformat() if campaign.end_date else None
+            })
+        return jsonify(campaign_list)
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch campaigns'}), 500
+
+@app.route('/api/financial/impact-calculator', methods=['POST'])
+def impact_calculator():
+    try:
+        data = request.get_json()
+        amount = float(data.get('amount', 0))
+        
+        # Impact calculations based on average costs
+        impact = {
+            'clean_water_families': int(amount / 25),  # $25 per family per year
+            'school_meals': int(amount / 0.50),       # $0.50 per meal
+            'medical_treatments': int(amount / 15),    # $15 per basic treatment
+            'educational_supplies': int(amount / 10),  # $10 per student supply kit
+            'emergency_kits': int(amount / 40)         # $40 per emergency family kit
+        }
+        
+        return jsonify({
+            'donation_amount': amount,
+            'impact': impact,
+            'message': f'Your ${amount} donation can make a significant impact!'
+        })
+    except Exception as e:
+        return jsonify({'error': 'Failed to calculate impact'}), 500
+
+@app.route('/api/financial/transparency')
+def financial_transparency():
+    try:
+        # Get latest financial report or generate current data
+        current_year = datetime.now().year
+        
+        # Calculate transparency metrics
+        total_donations = db.session.query(db.func.sum(Donation.amount)).filter(
+            db.extract('year', Donation.created_at) == current_year
+        ).scalar() or 0
+        
+        total_expenses = db.session.query(db.func.sum(Expense.amount)).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.status == 'approved'
+        ).scalar() or 0
+        
+        # Expense breakdown
+        program_expenses = db.session.query(db.func.sum(Expense.amount)).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.category == 'program',
+            Expense.status == 'approved'
+        ).scalar() or 0
+        
+        admin_expenses = db.session.query(db.func.sum(Expense.amount)).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.category == 'admin',
+            Expense.status == 'approved'
+        ).scalar() or 0
+        
+        fundraising_expenses = db.session.query(db.func.sum(Expense.amount)).filter(
+            db.extract('year', Expense.date) == current_year,
+            Expense.category == 'fundraising',
+            Expense.status == 'approved'
+        ).scalar() or 0
+        
+        return jsonify({
+            'year': current_year,
+            'total_income': total_donations,
+            'total_expenses': total_expenses,
+            'program_percentage': round((program_expenses / total_expenses * 100), 1) if total_expenses > 0 else 0,
+            'admin_percentage': round((admin_expenses / total_expenses * 100), 1) if total_expenses > 0 else 0,
+            'fundraising_percentage': round((fundraising_expenses / total_expenses * 100), 1) if total_expenses > 0 else 0,
+            'efficiency_rating': 'Excellent' if (program_expenses / total_expenses * 100) > 80 else 'Good' if (program_expenses / total_expenses * 100) > 70 else 'Fair',
+            'program_expenses': program_expenses,
+            'admin_expenses': admin_expenses,
+            'fundraising_expenses': fundraising_expenses
+        })
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch transparency data'}), 500
 
 # Create database tables
 with app.app_context():

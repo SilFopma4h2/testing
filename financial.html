@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Transparency - Hope Foundation</title>
+    <meta name="description" content="View Hope Foundation's financial transparency, annual reports, and impact metrics. See how your donations make a difference.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .financial-metric {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .financial-metric h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .financial-metric p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-color) 0deg, var(--background-light) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+        .progress-circle::before {
+            content: '';
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .progress-text {
+            position: relative;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+        .impact-calculator {
+            background: var(--background-light);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+        }
+        .calculator-input {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .impact-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .impact-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .impact-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        .campaign-progress {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .progress-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--accent-color));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar container">
+            <a href="index.html" class="navbar-brand">Hope Foundation</a>
+            <button class="navbar-toggle">☰</button>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="financial.html">Financial</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" id="authLink">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="hero">
+            <div class="container">
+                <h1>Financial Transparency</h1>
+                <p>We believe in complete transparency. Here's how your donations are making a real impact in communities worldwide.</p>
+            </div>
+        </section>
+
+        <!-- Financial Overview -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>2025 Financial Overview</h2>
+                    <p>Real-time financial metrics showing our current year performance</p>
+                </div>
+
+                <div class="row" id="financialMetrics">
+                    <!-- Metrics will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Expense Allocation -->
+        <section class="section section-bg">
+            <div class="container">
+                <div class="section-title">
+                    <h2>How We Use Your Donations</h2>
+                    <p>Transparency in action - see exactly where every dollar goes</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div class="progress-circle" id="programCircle">
+                                <div class="progress-text" id="programPercent">85%</div>
+                            </div>
+                            <h3>Programs & Services</h3>
+                            <p>Direct impact on communities through our core programs and services.</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div class="progress-circle" id="adminCircle">
+                                <div class="progress-text" id="adminPercent">10%</div>
+                            </div>
+                            <h3>Administration</h3>
+                            <p>Operational costs including staff, office, and administrative expenses.</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div class="progress-circle" id="fundraisingCircle">
+                                <div class="progress-text" id="fundraisingPercent">5%</div>
+                            </div>
+                            <h3>Fundraising</h3>
+                            <p>Costs associated with raising funds to support our mission.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <div class="alert alert-success" style="display: inline-block;">
+                        <strong>🏆 Efficiency Rating:</strong> <span id="efficiencyRating">Excellent</span>
+                        - Our low overhead ensures maximum impact from your donations
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Impact Calculator -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Donation Impact Calculator</h2>
+                    <p>See the real-world impact your donation will have</p>
+                </div>
+
+                <div class="impact-calculator">
+                    <div class="calculator-input">
+                        <label for="donationAmount" style="font-weight: bold; font-size: 1.2rem;">$</label>
+                        <input type="number" id="donationAmount" class="form-control" placeholder="100" value="100" min="1" style="width: 150px;">
+                        <button onclick="calculateImpact()" class="btn btn-primary">Calculate Impact</button>
+                    </div>
+
+                    <div class="impact-results" id="impactResults">
+                        <!-- Impact results will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Campaigns -->
+        <section class="section section-bg">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Current Funding Campaigns</h2>
+                    <p>Track the progress of our active fundraising campaigns</p>
+                </div>
+
+                <div id="campaignsList">
+                    <!-- Campaigns will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial Reports -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Annual Financial Reports</h2>
+                    <p>Download our comprehensive financial statements and annual reports</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>📊 2024 Annual Report</h3>
+                            <p>Complete financial statement including income, expenses, and impact metrics.</p>
+                            <a href="#" class="btn btn-outline">Download PDF</a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>📈 Financial Audit 2024</h3>
+                            <p>Independent audit report verifying our financial practices and transparency.</p>
+                            <a href="#" class="btn btn-outline">Download PDF</a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>💡 Impact Report 2024</h3>
+                            <p>Detailed breakdown of how donations were used and lives impacted.</p>
+                            <a href="#" class="btn btn-outline">Download PDF</a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h3>🎯 Strategic Plan 2025</h3>
+                            <p>Our financial goals and strategic initiatives for the coming year.</p>
+                            <a href="#" class="btn btn-outline">Download PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accountability -->
+        <section class="section">
+            <div class="container">
+                <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; padding: 3rem; border-radius: var(--border-radius); text-align: center;">
+                    <h2>Our Commitment to Transparency</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem;">We believe donors have the right to know how their contributions are used. That's why we maintain the highest standards of financial transparency and accountability.</p>
+                    
+                    <div class="row" style="margin-top: 2rem;">
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <h3>✅ GuideStar Gold</h3>
+                                <p>Highest transparency rating</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <h3>🔍 Annual Audits</h3>
+                                <p>Independent financial review</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <h3>📊 Public Reports</h3>
+                                <p>All financials publicly available</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <h3>🎯 Impact Tracking</h3>
+                                <p>Measurable results reporting</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3>Hope Foundation</h3>
+                <p>Transforming lives together through compassion, dedication, and financial transparency.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About Us</a>
+                <a href="projects.html">Projects</a>
+                <a href="donate.html">Donate</a>
+                <a href="financial.html">Financial</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hope Foundation. All rights reserved. | <a href="#" style="color: white;">Privacy Policy</a> | <a href="#" style="color: white;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Financial data loading and display
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFinancialOverview();
+            loadTransparencyData();
+            loadCampaigns();
+            calculateImpact(); // Initial calculation with default amount
+        });
+
+        async function loadFinancialOverview() {
+            try {
+                const response = await fetch('/api/financial/overview');
+                const data = await response.json();
+
+                const metricsHtml = `
+                    <div class="col-3">
+                        <div class="financial-metric">
+                            <h3>$${data.total_donations.toLocaleString()}</h3>
+                            <p>Total Donations ${data.year}</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="financial-metric">
+                            <h3>$${data.total_expenses.toLocaleString()}</h3>
+                            <p>Program Expenses ${data.year}</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="financial-metric">
+                            <h3>$${data.net_result.toLocaleString()}</h3>
+                            <p>Net Result ${data.year}</p>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="financial-metric">
+                            <h3>${data.active_campaigns.length}</h3>
+                            <p>Active Campaigns</p>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('financialMetrics').innerHTML = metricsHtml;
+            } catch (error) {
+                console.error('Error loading financial overview:', error);
+            }
+        }
+
+        async function loadTransparencyData() {
+            try {
+                const response = await fetch('/api/financial/transparency');
+                const data = await response.json();
+
+                // Update progress circles
+                updateProgressCircle('programCircle', 'programPercent', data.program_percentage, var(--success-color));
+                updateProgressCircle('adminCircle', 'adminPercent', data.admin_percentage, var(--info-color));
+                updateProgressCircle('fundraisingCircle', 'fundraisingPercent', data.fundraising_percentage, var(--warning-color));
+
+                document.getElementById('efficiencyRating').textContent = data.efficiency_rating;
+            } catch (error) {
+                console.error('Error loading transparency data:', error);
+            }
+        }
+
+        function updateProgressCircle(circleId, textId, percentage, color) {
+            const circle = document.getElementById(circleId);
+            const text = document.getElementById(textId);
+            
+            text.textContent = percentage + '%';
+            
+            const angle = (percentage / 100) * 360;
+            circle.style.background = `conic-gradient(#28a745 ${angle}deg, #f8f9fa ${angle}deg)`;
+        }
+
+        async function loadCampaigns() {
+            try {
+                const response = await fetch('/api/financial/campaigns');
+                const campaigns = await response.json();
+
+                const campaignsHtml = campaigns.map(campaign => `
+                    <div class="campaign-progress">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>${campaign.name}</h3>
+                            <span style="color: var(--success-color); font-weight: bold;">${campaign.progress}%</span>
+                        </div>
+                        <p>${campaign.description}</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${campaign.progress}%"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-light);">
+                            <span>$${campaign.raised_amount.toLocaleString()} raised</span>
+                            <span>Goal: $${campaign.goal_amount.toLocaleString()}</span>
+                        </div>
+                        <a href="donate.html?campaign=${campaign.id}" class="btn btn-primary" style="margin-top: 1rem;">Support This Campaign</a>
+                    </div>
+                `).join('');
+
+                document.getElementById('campaignsList').innerHTML = campaignsHtml || '<p>No active campaigns at this time.</p>';
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+                document.getElementById('campaignsList').innerHTML = '<p>Error loading campaigns. Please try again later.</p>';
+            }
+        }
+
+        async function calculateImpact() {
+            const amount = document.getElementById('donationAmount').value || 100;
+            
+            try {
+                const response = await fetch('/api/financial/impact-calculator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: amount })
+                });
+                
+                const data = await response.json();
+                const impact = data.impact;
+
+                const impactHtml = `
+                    <div class="impact-item">
+                        <div class="impact-number">${impact.clean_water_families}</div>
+                        <p>Families with clean water for a year</p>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">${impact.school_meals}</div>
+                        <p>Nutritious school meals</p>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">${impact.medical_treatments}</div>
+                        <p>Basic medical treatments</p>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">${impact.educational_supplies}</div>
+                        <p>Student supply kits</p>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">${impact.emergency_kits}</div>
+                        <p>Emergency family kits</p>
+                    </div>
+                `;
+
+                document.getElementById('impactResults').innerHTML = impactHtml;
+            } catch (error) {
+                console.error('Error calculating impact:', error);
+                document.getElementById('impactResults').innerHTML = '<p>Error calculating impact. Please try again.</p>';
+            }
+        }
+
+        // Update impact calculation on input change
+        document.getElementById('donationAmount').addEventListener('input', function() {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => calculateImpact(), 500);
+        });
+    </script>
+</body>
+</html>
