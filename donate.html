@@ -212,7 +212,7 @@
 
                                 <div class="form-group">
                                     <label for="donorPhone" class="form-label">Phone Number</label>
-                                    <input type="tel" id="donorPhone" name="donorPhone" class="form-control" placeholder="For M-Pesa and updates">
+                                    <input type="tel" id="donorPhone" name="donorPhone" class="form-control" placeholder="For updates and notifications">
                                 </div>
 
                                 <!-- Project Selection -->
@@ -283,7 +283,7 @@
                         <div class="card text-center">
                             <h3 style="color: #f7931a;">Bitcoin (BTC)</h3>
                             <p><strong>Our Bitcoin Address:</strong><br>
-                            <small style="font-family: monospace; word-break: break-all;">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</small><br>
+                            <small id="staticBitcoinAddress" style="font-family: monospace; word-break: break-all;">Loading...</small><br>
                             <small style="color: #666;">Scan QR code or copy address above</small></p>
                         </div>
                     </div>
@@ -291,7 +291,7 @@
                         <div class="card text-center">
                             <h3 style="color: #627eea;">Ethereum (ETH)</h3>
                             <p><strong>Our Ethereum Address:</strong><br>
-                            <small style="font-family: monospace; word-break: break-all;">0x742d35Cc6634C0532925a3b8D9f9f9f</small><br>
+                            <small id="staticEthereumAddress" style="font-family: monospace; word-break: break-all;">Loading...</small><br>
                             <small style="color: #666;">Scan QR code or copy address above</small></p>
                         </div>
                     </div>
@@ -442,19 +442,39 @@
                 
                 if (method === 'bitcoin') {
                     cryptoTitle.textContent = 'Send Bitcoin (BTC) to this address:';
-                    // Placeholder address - will be updated with actual address
-                    cryptoAddress.textContent = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
+                    cryptoAddress.textContent = cryptoAddresses.bitcoin || 'Loading address...';
                 } else if (method === 'ethereum') {
                     cryptoTitle.textContent = 'Send Ethereum (ETH) to this address:';
-                    // Placeholder address - will be updated with actual address
-                    cryptoAddress.textContent = '0x742d35Cc6634C0532925a3b8D9f9f9f';
+                    cryptoAddress.textContent = cryptoAddresses.ethereum || 'Loading address...';
                 }
+            }
+        }
+        
+        // Crypto addresses cache
+        let cryptoAddresses = {};
+        
+        // Fetch crypto addresses from API
+        async function loadCryptoAddresses() {
+            try {
+                const response = await fetch('/api/crypto-addresses');
+                const result = await response.json();
+                if (result.success) {
+                    cryptoAddresses = result.addresses;
+                    // Update static addresses in the display
+                    document.getElementById('staticBitcoinAddress').textContent = cryptoAddresses.bitcoin;
+                    document.getElementById('staticEthereumAddress').textContent = cryptoAddresses.ethereum;
+                }
+            } catch (error) {
+                console.error('Failed to load crypto addresses:', error);
+                document.getElementById('staticBitcoinAddress').textContent = 'Failed to load address';
+                document.getElementById('staticEthereumAddress').textContent = 'Failed to load address';
             }
         }
         
         // Initialize default selections
         document.addEventListener('DOMContentLoaded', function() {
             selectDonationType('one-time');
+            loadCryptoAddresses();
         });
     </script>
 </body>

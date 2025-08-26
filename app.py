@@ -93,7 +93,7 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(3), default='USD')
-    payment_method = db.Column(db.String(20), nullable=False)  # card, mpesa, bank, paypal
+    payment_method = db.Column(db.String(20), nullable=False)  # bitcoin, ethereum
     payment_status = db.Column(db.String(20), default='pending')  # pending, completed, failed, refunded
     transaction_id = db.Column(db.String(100), unique=True)
     gateway_reference = db.Column(db.String(100))  # External payment gateway reference
@@ -113,7 +113,7 @@ class Donation(db.Model):
     phone = db.Column(db.String(20))
     amount = db.Column(db.Float, nullable=False)
     donation_type = db.Column(db.String(20), nullable=False)  # one-time, monthly
-    payment_method = db.Column(db.String(20), nullable=False)  # mpesa, card, bank
+    payment_method = db.Column(db.String(20), nullable=False)  # bitcoin, ethereum
     project = db.Column(db.String(50), default='general')
     message = db.Column(db.Text)
     anonymous = db.Column(db.Boolean, default=False)
@@ -590,8 +590,8 @@ def donation_form():
         
         # Send confirmation email
         crypto_addresses = {
-            'bitcoin': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',  # Placeholder - to be updated
-            'ethereum': '0x742d35Cc6634C0532925a3b8D9f9f9f'  # Placeholder - to be updated
+            'bitcoin': os.getenv('BITCOIN_ADDRESS', 'BITCOIN_ADDRESS_NOT_SET'),
+            'ethereum': os.getenv('ETHEREUM_ADDRESS', 'ETHEREUM_ADDRESS_NOT_SET')
         }
         
         crypto_address = crypto_addresses.get(data['paymentMethod'], 'N/A')
@@ -646,6 +646,15 @@ def donation_form():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': 'An error occurred. Please try again later.'}), 500
+
+@app.route('/api/crypto-addresses', methods=['GET'])
+def get_crypto_addresses():
+    """Get cryptocurrency addresses for donations"""
+    crypto_addresses = {
+        'bitcoin': os.getenv('BITCOIN_ADDRESS', 'BITCOIN_ADDRESS_NOT_SET'),
+        'ethereum': os.getenv('ETHEREUM_ADDRESS', 'ETHEREUM_ADDRESS_NOT_SET')
+    }
+    return jsonify({'success': True, 'addresses': crypto_addresses})
 
 # Payment Management Routes
 @app.route('/api/payments', methods=['GET'])
