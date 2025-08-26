@@ -10,19 +10,24 @@ A modern, responsive website for a non-governmental organization with a fully fu
 - **Real-time Feedback**: Loading states, validation, and beautiful alert notifications
 - **Smooth Animations**: Hover effects, transitions, and micro-interactions
 
-### Backend (NEW!)
+### Backend (Enhanced!)
 - **Python Flask Backend**: RESTful API endpoints for all forms
+- **User Authentication**: Complete registration, login, logout system
 - **Database Integration**: SQLAlchemy with SQLite for data persistence
+- **Enhanced Payment Tracking**: Dedicated payment model for comprehensive financial records
 - **Email Notifications**: Automated confirmation emails for form submissions
-- **Form Validation**: Server-side validation with proper error handling
-- **Admin Dashboard**: Basic statistics endpoint for monitoring
+- **Form Validation**: Server-side validation with proper error handling  
+- **User Dashboard**: Personalized dashboard with donation history and statistics
+- **Session Management**: Secure session-based authentication
+- **Admin Dashboard**: Enhanced statistics endpoint for monitoring users and payments
 
 ### Pages
-- **Home**: Mission highlight with improved hero section
+- **Home**: Mission highlight with improved hero section  
 - **About Us**: Mission, vision, objectives, history, and team information
 - **Projects**: Current and upcoming projects overview
 - **Donate**: Secure donation processing with multiple payment options
 - **Contact**: Contact form with regional offices and FAQ
+- **Login/Register**: User authentication with personal dashboard
 
 ## 🚀 Quick Start
 
@@ -84,18 +89,41 @@ A modern, responsive website for a non-governmental organization with a fully fu
 
 ## 📊 API Endpoints
 
+### Public Endpoints
 - `POST /api/contact` - Submit contact form
 - `POST /api/donate` - Process donation
 - `POST /api/newsletter` - Newsletter subscription
 - `GET /api/admin/stats` - Basic statistics
 
+### Authentication Endpoints
+- `POST /api/register` - User registration
+- `POST /api/login` - User login
+- `POST /api/logout` - User logout
+
+### Protected Endpoints (Login Required)
+- `GET /api/user/profile` - Get user profile
+- `PUT /api/user/profile` - Update user profile  
+- `GET /api/user/dashboard` - User dashboard with stats
+- `GET /api/user/donations` - User's donation history
+- `GET /api/payments` - User's payment history
+
 ## 🗄 Database Schema
+
+### User
+- User authentication and profile information
+- Relationships to donations, contacts, and payments
 
 ### Contact
 - Contact form submissions with status tracking
+- Optional user association for logged-in users
 
 ### Donation  
 - Donation records with payment method and project allocation
+- Links to user accounts and payment records
+
+### Payment
+- Comprehensive payment tracking for all transactions
+- Gateway integration support and status management
 
 ### Newsletter
 - Email subscriptions with status management
