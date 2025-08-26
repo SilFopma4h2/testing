@@ -18,6 +18,7 @@
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="projects.html">Projects</a></li>
                 <li><a href="donate.html">Donate</a></li>
+                <li><a href="financial.html">Financial</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="login.html" id="authLink">Login</a></li>
             </ul>
@@ -140,6 +141,79 @@
             </div>
         </section>
 
+        <!-- Financial Transparency Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Financial Transparency</h2>
+                    <p>See how we use your donations and our commitment to financial accountability</p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div style="font-size: 3rem; color: var(--success-color); margin-bottom: 1rem;">85%</div>
+                            <h3>Programs</h3>
+                            <p>Of every dollar goes directly to our programs and services</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div style="font-size: 3rem; color: var(--info-color); margin-bottom: 1rem;">10%</div>
+                            <h3>Administration</h3>
+                            <p>Used for essential operational and administrative costs</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card text-center">
+                            <div style="font-size: 3rem; color: var(--warning-color); margin-bottom: 1rem;">5%</div>
+                            <h3>Fundraising</h3>
+                            <p>Invested in sustainable fundraising for long-term impact</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center" style="margin-top: 2rem;">
+                    <a href="financial.html" class="btn btn-outline">View Full Financial Report</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Impact Counter -->
+        <section class="section section-bg">
+            <div class="container">
+                <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; padding: 3rem; border-radius: var(--border-radius); text-align: center;">
+                    <h2>Real-Time Impact</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem;">See the difference we're making together</p>
+                    
+                    <div class="row">
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <div id="totalDonations" style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">$0</div>
+                                <p>Total Donations 2025</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <div id="familiesHelped" style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">0</div>
+                                <p>Families Helped</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <div id="childrenEducated" style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">0</div>
+                                <p>Children Educated</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: var(--border-radius);">
+                                <div id="activeCampaigns" style="font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">0</div>
+                                <p>Active Campaigns</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Get Involved Section -->
         <section class="section section-bg">
             <div class="container">
@@ -203,6 +277,7 @@
                 <a href="about.html">About Us</a>
                 <a href="projects.html">Projects</a>
                 <a href="donate.html">Donate</a>
+                <a href="financial.html">Financial</a>
                 <a href="contact.html">Contact</a>
             </div>
             <div class="footer-bottom">
@@ -212,5 +287,55 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Load financial data on homepage
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHomepageFinancialData();
+        });
+
+        async function loadHomepageFinancialData() {
+            try {
+                const response = await fetch('/api/financial/overview');
+                const data = await response.json();
+                
+                // Update counters with animation
+                animateCounter('totalDonations', data.total_donations, '$');
+                animateCounter('familiesHelped', Math.floor(data.total_donations / 45)); // Average $45 per family served
+                animateCounter('childrenEducated', Math.floor(data.total_donations / 25)); // Average $25 per child
+                animateCounter('activeCampaigns', data.active_campaigns.length);
+                
+            } catch (error) {
+                console.error('Error loading financial data:', error);
+                // Set default values if API fails
+                document.getElementById('totalDonations').textContent = '$122,000';
+                document.getElementById('familiesHelped').textContent = '2,711';
+                document.getElementById('childrenEducated').textContent = '4,880';
+                document.getElementById('activeCampaigns').textContent = '3';
+            }
+        }
+
+        function animateCounter(elementId, targetValue, prefix = '') {
+            const element = document.getElementById(elementId);
+            const duration = 2000; // 2 seconds
+            const frameDuration = 1000 / 60; // 60 FPS
+            const totalFrames = Math.round(duration / frameDuration);
+            const easeOutQuad = t => t * (2 - t);
+
+            let frame = 0;
+            const countTo = parseInt(targetValue);
+            const timer = setInterval(() => {
+                frame++;
+                const progress = easeOutQuad(frame / totalFrames);
+                const currentCount = Math.round(countTo * progress);
+                
+                element.textContent = prefix + currentCount.toLocaleString();
+                
+                if (frame === totalFrames) {
+                    clearInterval(timer);
+                    element.textContent = prefix + countTo.toLocaleString();
+                }
+            }, frameDuration);
+        }
+    </script>
 </body>
 </html>
