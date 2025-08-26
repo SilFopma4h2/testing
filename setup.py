@@ -59,11 +59,13 @@ def main():
     
     # Activate virtual environment and install requirements
     if os.name == 'nt':  # Windows
-        activate_cmd = 'venv\\Scripts\\activate && '
+        activate_cmd = 'venv\\Scripts\\activate.bat && '
+        python_cmd = 'venv\\Scripts\\python'
     else:  # Unix/Linux/Mac
-        activate_cmd = 'source venv/bin/activate && '
+        activate_cmd = '. venv/bin/activate && '
+        python_cmd = 'venv/bin/python'
     
-    if not run_command(f'{activate_cmd}pip install -r requirements.txt', 
+    if not run_command(f'{python_cmd} -m pip install -r requirements.txt', 
                       'Installing Python dependencies'):
         return False
     
@@ -72,7 +74,7 @@ def main():
         return False
     
     # Initialize database
-    if not run_command(f'{activate_cmd}python -c "from app import app, db; app.app_context().push(); db.create_all(); print(\'Database initialized successfully\')"', 
+    if not run_command(f'{python_cmd} -c "from app import app, db; app.app_context().push(); db.create_all(); print(\'Database initialized successfully\')"', 
                       'Initializing database'):
         return False
     
@@ -81,10 +83,11 @@ def main():
     print("1. Edit .env file with your email configuration (optional)")
     print("2. Run the application:")
     if os.name == 'nt':
-        print("   venv\\Scripts\\activate")
+        print("   venv\\Scripts\\activate.bat")
+        print("   python app.py")
     else:
-        print("   source venv/bin/activate")
-    print("   python app.py")
+        print("   . venv/bin/activate")
+        print("   python app.py")
     print("3. Open http://localhost:5000 in your browser")
     
     return True
