@@ -184,6 +184,36 @@ class FinancialReport(db.Model):
     report_data = db.Column(db.Text)  # JSON data for detailed breakdown
     generated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+# Conservation Fee model (separate from Donation for clearer tracking)
+class ConservationFee(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    payer_name = db.Column(db.String(120), nullable=False)
+    payer_email = db.Column(db.String(120), nullable=False)
+    payer_phone = db.Column(db.String(30))
+    country = db.Column(db.String(60))
+    id_number = db.Column(db.String(60))  # passport / national ID (optional)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default='USD')
+    payment_method = db.Column(db.String(20), nullable=False)  # bitcoin, ethereum
+    status = db.Column(db.String(20), default='pending')  # pending, completed, failed
+    transaction_id = db.Column(db.String(100), unique=True)
+    receipt_code = db.Column(db.String(40), unique=True, index=True)
+    payment_id = db.Column(db.Integer, db.ForeignKey('payment.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_public_dict(self):
+        return {
+            'transaction_id': self.transaction_id,
+            'receipt_code': self.receipt_code,
+            'payer_name': self.payer_name,
+            'amount': self.amount,
+            'currency': self.currency,
+            'payment_method': self.payment_method,
+            'status': self.status,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
 # Utility functions
 def validate_email_address(email):
     try:
@@ -243,6 +273,11 @@ def send_discord_notification(donation_data):
     if not DISCORD_WEBHOOK_URL:
         print("Discord webhook URL not configured")
         return False
+
+def generate_receipt_code():
+    """Generate a short, hard-to-guess receipt code tourists can show as proof."""
+    import secrets
+    return secrets.token_hex(6).upper()  # 12 hex chars
     
     try:
         # Create Discord embed message
@@ -646,6 +681,114 @@ def donation_form():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': 'An error occurred. Please try again later.'}), 500
+
+@app.route('/api/conservation/fee', methods=['POST'])
+def create_conservation_fee():
+    """Create a conservation fee record and return wallet address + receipt code.
+    This mirrors donations but is a distinct flow (e.g., park entry / conservation levy).
+    """
+    try:
+        data = request.get_json() or {}
+
+        # Required fields
+        required = ['name', 'email', 'amount', 'paymentMethod']
+        for f in required:
+            if not data.get(f):
+                return jsonify({'success': False, 'message': f'{f} is required.'}), 400
+
+        # Validate email & amount
+        if not validate_email_address(data['email']):
+            return jsonify({'success': False, 'message': 'Invalid email address.'}), 400
+        try:
+            amount = float(data['amount'])
+            if amount <= 0:
+                raise ValueError
+        except Exception:
+            return jsonify({'success': False, 'message': 'Invalid amount.'}), 400
+
+        payment_method = data['paymentMethod'].lower()
+        if payment_method not in ['bitcoin', 'ethereum']:
+            return jsonify({'success': False, 'message': 'Only Bitcoin or Ethereum accepted.'}), 400
+
+        # Generate ids
+        transaction_id = generate_transaction_id()
+        receipt_code = generate_receipt_code()
+
+        # Create payment record (for unified tracking)
+        payment = Payment(
+            user_id=session.get('user_id'),
+            amount=amount,
+            payment_method=payment_method,
+            transaction_id=transaction_id,
+            payment_type='conservation_fee',
+            description='Conservation Fee'
+        )
+        db.session.add(payment)
+        db.session.flush()
+
+        fee = ConservationFee(
+            payer_name=data['name'],
+            payer_email=data['email'],
+            payer_phone=data.get('phone'),
+            country=data.get('country'),
+            id_number=data.get('idNumber'),
+            amount=amount,
+            payment_method=payment_method,
+            transaction_id=transaction_id,
+            receipt_code=receipt_code,
+            payment_id=payment.id
+        )
+        db.session.add(fee)
+
+        crypto_addresses = {
+            'bitcoin': os.getenv('BITCOIN_ADDRESS', 'BITCOIN_ADDRESS_NOT_SET'),
+            'ethereum': os.getenv('ETHEREUM_ADDRESS', 'ETHEREUM_ADDRESS_NOT_SET')
+        }
+        wallet_address = crypto_addresses.get(payment_method, 'N/A')
+
+        db.session.commit()
+
+        # Email receipt (pending until blockchain confirmation)
+        email_html = f"""
+        <h2>Conservation Fee Initiated</h2>
+        <p>Dear {data['name']},</p>
+        <p>Thank you for supporting conservation efforts. Please complete your payment using the cryptocurrency details below.</p>
+        <ul>
+          <li><strong>Amount:</strong> ${amount}</li>
+          <li><strong>Cryptocurrency:</strong> {payment_method.title()}</li>
+          <li><strong>Transaction ID:</strong> {transaction_id}</li>
+          <li><strong>Receipt Code:</strong> {receipt_code}</li>
+          <li><strong>Status:</strong> Pending Confirmation</li>
+        </ul>
+        <p><strong>Send exactly ${amount} worth of {payment_method.title()} to:</strong></p>
+        <p style='background:#f8f9fa;padding:12px;border-radius:6px;font-family:monospace;'>{wallet_address}</p>
+        <p>You can later verify this fee at: <br>
+        <a href="{request.host_url.rstrip('/')}/api/conservation/verify/{receipt_code}">{request.host_url.rstrip('/')}/api/conservation/verify/{receipt_code}</a></p>
+        <p>Show the receipt code or this email as proof at entry points.</p>
+        <p>We will email you again once the payment is confirmed on the blockchain.</p>
+        <p>— Hope Foundation Conservation Team</p>
+        """
+        send_email(data['email'], 'Your Conservation Fee Receipt (Pending)', email_html)
+
+        return jsonify({
+            'success': True,
+            'message': 'Conservation fee recorded. Complete crypto transfer using the provided wallet address.',
+            'transactionId': transaction_id,
+            'receiptCode': receipt_code,
+            'walletAddress': wallet_address,
+            'status': 'pending'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Failed to create conservation fee.'}), 500
+
+@app.route('/api/conservation/verify/<receipt_code>', methods=['GET'])
+def verify_conservation_fee(receipt_code):
+    """Public endpoint to verify a conservation fee by receipt code."""
+    fee = ConservationFee.query.filter_by(receipt_code=receipt_code.upper()).first()
+    if not fee:
+        return jsonify({'success': False, 'message': 'Receipt not found.'}), 404
+    return jsonify({'success': True, 'fee': fee.to_public_dict()})
 
 @app.route('/api/crypto-addresses', methods=['GET'])
 def get_crypto_addresses():
