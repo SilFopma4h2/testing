@@ -387,9 +387,9 @@
                 const data = await response.json();
 
                 // Update progress circles
-                updateProgressCircle('programCircle', 'programPercent', data.program_percentage, var(--success-color));
-                updateProgressCircle('adminCircle', 'adminPercent', data.admin_percentage, var(--info-color));
-                updateProgressCircle('fundraisingCircle', 'fundraisingPercent', data.fundraising_percentage, var(--warning-color));
+                updateProgressCircle('programCircle', 'programPercent', data.program_percentage, '#28a745');
+                updateProgressCircle('adminCircle', 'adminPercent', data.admin_percentage, '#17a2b8');
+                updateProgressCircle('fundraisingCircle', 'fundraisingPercent', data.fundraising_percentage, '#ffc107');
 
                 document.getElementById('efficiencyRating').textContent = data.efficiency_rating;
             } catch (error) {
