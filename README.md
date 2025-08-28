@@ -1,6 +1,6 @@
-# Patte Conservation - Static Website
+# Patte Conservation - Website with Python Backend
 
-A modern, responsive website for Patte Conservation, a marine conservation organization. This is a static HTML/CSS/JavaScript website with interactive forms and beautiful design.
+A modern, responsive website for Patte Conservation, a marine conservation organization. Features a Python Flask backend API serving financial data, campaign information, and cryptocurrency addresses to a beautiful HTML/CSS/JavaScript frontend.
 
 ## ✨ Features
 
@@ -21,7 +21,18 @@ A modern, responsive website for Patte Conservation, a marine conservation organ
 
 ## 🚀 Quick Start
 
-### Option 1: Simple HTTP Server (Recommended for Development)
+### Option 1: With Python Backend (Recommended)
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run the Flask backend server
+python app.py
+
+# Then open http://localhost:8000 in your browser
+```
+
+### Option 2: Static Only (Limited functionality)
 ```bash
 # Python 3
 python -m http.server 8000
@@ -34,17 +45,19 @@ npx http-server
 
 # Then open http://localhost:8000 in your browser
 ```
-
-### Option 2: Direct File Opening
-You can also open `index.html` directly in your browser, though some features may not work perfectly due to CORS restrictions.
+Note: Financial data and cryptocurrency addresses will not load without the Python backend.
 
 ## 🛠 Tech Stack
 
-### Frontend Only
+### Backend
+- **Python 3**: Core backend language
+- **Flask**: Lightweight web framework
+- **Flask-CORS**: Cross-origin resource sharing support
+
+### Frontend
 - **HTML5**: Semantic markup
 - **CSS3**: Modern styling with custom properties and responsive design
-- **Vanilla JavaScript**: Form handling, validation, and interactive features
-- **No Backend Required**: All functionality is client-side
+- **Vanilla JavaScript**: Form handling, validation, and API integration
 
 ## 🎨 Design Features
 
