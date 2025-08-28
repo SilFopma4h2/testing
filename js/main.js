@@ -1,9 +1,6 @@
-// Main JavaScript for NGO Website MVP
+// Main JavaScript for NGO Website - Static Frontend
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check login status and update navigation
-    checkLoginStatusAndUpdateNav();
-    
     // Mobile navigation toggle
     const navbarToggle = document.querySelector('.navbar-toggle');
     const navbarNav = document.querySelector('.navbar-nav');
@@ -74,10 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
             handleNewsletterForm();
         });
     }
+    
+    console.log('NGO Website Static Frontend - JavaScript loaded successfully');
 });
 
-// Contact form handler
-async function handleContactForm() {
+// Contact form handler (client-side only)
+function handleContactForm() {
     const form = document.getElementById('contactForm');
     const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
@@ -108,34 +107,19 @@ async function handleContactForm() {
     const originalText = submitButton.innerHTML;
     submitButton.innerHTML = '<span class="loading-spinner"></span>Sending...';
     
-    try {
-        const response = await fetch('/api/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+    // Simulate form submission (since no backend)
+    setTimeout(() => {
+        showAlert('Thank you for your message! We will get back to you soon.', 'success');
+        form.reset();
         
-        const result = await response.json();
-        
-        if (result.success) {
-            showAlert(result.message, 'success');
-            form.reset();
-        } else {
-            showAlert(result.message, 'error');
-        }
-    } catch (error) {
-        showAlert('Network error. Please check your connection and try again.', 'error');
-    } finally {
         // Reset button state
         submitButton.disabled = false;
-        submitButton.textContent = originalText;
-    }
+        submitButton.innerHTML = originalText;
+    }, 1500);
 }
 
-// Donation form handler
-async function handleDonationForm() {
+// Donation form handler (client-side only)
+function handleDonationForm() {
     const form = document.getElementById('donateForm');
     const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
@@ -182,38 +166,19 @@ async function handleDonationForm() {
     const originalText = submitButton.innerHTML;
     submitButton.innerHTML = '<span class="loading-spinner"></span>Processing...';
     
-    try {
-        const response = await fetch('/api/donate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+    // Simulate donation processing (since no backend)
+    setTimeout(() => {
+        showAlert('Thank you for your generous donation! You will be redirected to complete the payment.', 'success');
         
-        const result = await response.json();
-        
-        if (result.success) {
-            showAlert(result.message, 'success');
-            
-            // Redirect to thank you page after successful donation
-            setTimeout(() => {
-                window.location.href = 'thank-you.html?amount=' + result.amount + '&method=' + result.paymentMethod;
-            }, 2000);
-        } else {
-            showAlert(result.message, 'error');
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalText;
-        }
-    } catch (error) {
-        showAlert('Network error. Please check your connection and try again.', 'error');
-        submitButton.disabled = false;
-        submitButton.innerHTML = originalText;
-    }
+        // Redirect to thank you page after "successful" donation
+        setTimeout(() => {
+            window.location.href = `thank-you.html?amount=${donationAmount}&method=${data.paymentMethod}`;
+        }, 2000);
+    }, 1500);
 }
 
-// Newsletter form handler
-async function handleNewsletterForm() {
+// Newsletter form handler (client-side only)
+function handleNewsletterForm() {
     const form = document.getElementById('newsletterForm');
     const submitButton = form.querySelector('button[type="submit"]');
     const formData = new FormData(form);
@@ -232,30 +197,15 @@ async function handleNewsletterForm() {
     const originalText = submitButton.innerHTML;
     submitButton.innerHTML = '<span class="loading-spinner"></span>Subscribing...';
     
-    try {
-        const response = await fetch('/api/newsletter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+    // Simulate newsletter subscription (since no backend)
+    setTimeout(() => {
+        showAlert('Thank you for subscribing to our newsletter!', 'success');
+        form.reset();
         
-        const result = await response.json();
-        
-        if (result.success) {
-            showAlert(result.message, 'success');
-            form.reset();
-        } else {
-            showAlert(result.message, 'error');
-        }
-    } catch (error) {
-        showAlert('Network error. Please check your connection and try again.', 'error');
-    } finally {
         // Reset button state
         submitButton.disabled = false;
-        submitButton.textContent = originalText;
-    }
+        submitButton.innerHTML = originalText;
+    }, 1500);
 }
 
 // Utility functions
@@ -287,52 +237,4 @@ function showAlert(message, type = 'info') {
             alert.remove();
         }
     }, 5000);
-}
-
-
-
-// Initialize any additional functionality
-function initializeComponents() {
-    // Add any component initialization here
-    console.log('NGO Website MVP - JavaScript loaded successfully');
-}
-
-// Authentication functions
-async function checkLoginStatusAndUpdateNav() {
-    try {
-        const response = await fetch('/api/user/profile');
-        if (response.ok) {
-            const result = await response.json();
-            updateNavForLoggedInUser(result.user);
-        }
-    } catch (error) {
-        // User not logged in, keep default nav
-    }
-}
-
-function updateNavForLoggedInUser(user) {
-    const authLink = document.getElementById('authLink');
-    if (authLink) {
-        authLink.textContent = `Hi, ${user.first_name}`;
-        authLink.href = 'login.html'; // Dashboard page
-        authLink.classList.add('user-link');
-    }
-}
-
-// Global logout function
-async function globalLogout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-        });
-        
-        if (response.ok) {
-            showAlert('Logged out successfully!', 'success');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }
-    } catch (error) {
-        showAlert('Error logging out', 'error');
-    }
 }
