@@ -258,6 +258,18 @@
                                     </button>
                                 </div>
 
+                                <!-- Donation Response Message -->
+                                <div id="donationResponse" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border-radius: 5px; text-align: center;">
+                                    <h3 id="responseTitle"></h3>
+                                    <p id="responseMessage"></p>
+                                    <div id="referenceContainer" style="margin: 1.5rem 0; padding: 1rem; background: #f8f9fa; border: 2px solid #28a745; border-radius: 5px;">
+                                        <p style="margin: 0; font-size: 0.9rem; color: #333;">Your Reference Number:</p>
+                                        <p id="referenceCode" style="font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #28a745; margin: 0.5rem 0;"></p>
+                                        <p style="margin: 0; font-size: 0.9rem; color: #666;">Please save this reference number for tracking your donation</p>
+                                    </div>
+                                    <p id="additionalInstructions"></p>
+                                </div>
+
                                 <!-- Security Notice -->
                                 <div class="text-center" style="margin-top: 1rem; padding: 1rem; background: var(--background-light); border-radius: 5px;">
                                     <p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">
@@ -475,7 +487,92 @@
         document.addEventListener('DOMContentLoaded', function() {
             selectDonationType('one-time');
             loadCryptoAddresses();
+            
+            // Add form submission handler
+            document.getElementById('donateForm').addEventListener('submit', handleDonationSubmit);
         });
+        
+        // Handle form submission
+        async function handleDonationSubmit(event) {
+            event.preventDefault();
+            
+            // Show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+            
+            btnText.style.visibility = 'hidden';
+            spinner.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            try {
+                // Gather form data
+                const formData = {
+                    donorName: document.getElementById('donorName').value,
+                    donorEmail: document.getElementById('donorEmail').value,
+                    donorPhone: document.getElementById('donorPhone').value,
+                    amount: document.querySelector('input[name="amount"]:checked').value,
+                    customAmount: document.querySelector('input[name="customAmount"]').value,
+                    donationType: document.querySelector('input[name="donationType"]:checked').value,
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                    projectSelection: document.getElementById('projectSelection').value,
+                    donorMessage: document.getElementById('donorMessage').value,
+                    anonymous: document.querySelector('input[name="anonymous"]')?.checked || false,
+                    newsletter: document.querySelector('input[name="newsletter"]')?.checked || false
+                };
+                
+                // Send to backend
+                const response = await fetch('/api/donate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message with reference code
+                    document.getElementById('donationResponse').style.display = 'block';
+                    document.getElementById('responseTitle').textContent = 'Thank You for Your Donation!';
+                    document.getElementById('responseMessage').textContent = 'Your donation request has been submitted successfully.';
+                    document.getElementById('referenceCode').textContent = result.referenceCode;
+                    document.getElementById('additionalInstructions').innerHTML = 
+                        `Please send ${formData.amount === 'custom' ? '$' + formData.customAmount : '$' + formData.amount} 
+                        worth of ${result.paymentMethod} to the wallet address in your confirmation email.`;
+                    
+                    // Hide form fields
+                    const formGroups = document.querySelectorAll('#donateForm .form-group:not(:last-child)');
+                    formGroups.forEach(group => {
+                        group.style.display = 'none';
+                    });
+                    
+                    // Change button text
+                    btnText.textContent = 'Return to Home';
+                    btnText.style.visibility = 'visible';
+                    submitBtn.disabled = false;
+                    spinner.style.display = 'none';
+                    
+                    // Make the button redirect to home
+                    submitBtn.onclick = function() {
+                        window.location.href = 'index.html';
+                    };
+                } else {
+                    // Show error message
+                    alert('Error: ' + result.message);
+                    btnText.style.visibility = 'visible';
+                    spinner.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error submitting donation:', error);
+                alert('An error occurred while processing your donation. Please try again later.');
+                btnText.style.visibility = 'visible';
+                spinner.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
